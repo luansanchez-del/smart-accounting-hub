@@ -227,9 +227,12 @@ function HeroDashboard() {
                 </div>
                 <span className="text-xs text-muted-foreground">Últimos 8 ciclos</span>
               </div>
-              <div className="flex h-32 items-end gap-2.5">
+              <div className="flex h-32 items-stretch gap-2.5">
                 {bars.map((h, i) => (
-                  <div key={i} className="flex flex-1 flex-col items-center gap-2">
+                  <div
+                    key={i}
+                    className="flex flex-1 flex-col items-center justify-end gap-2"
+                  >
                     <div
                       className="w-full rounded-md bg-gradient-to-t from-primary/40 to-primary transition-all"
                       style={{ height: `${h}%` }}
