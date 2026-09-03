@@ -29,7 +29,7 @@ interface PierCliente {
 
 const REGIME_POR_TRIBUTACAO: Record<string, string> = {
   "Simples Nacional": "simples",
-  "MEI": "simples",
+  "MEI": "mei",
   "Lucro Presumido": "presumido",
   "Lucro Real": "real",
   "Lucro Arbitrado": "real",
@@ -116,12 +116,26 @@ Deno.serve(async (req) => {
 
       const { data: existente } = await supabase
         .from("empresas")
-        .select("id")
+        .select("id, regime_confirmado")
         .eq("cnpj", cnpj)
         .maybeSingle();
 
       if (existente) {
-        resultado.atualizadas++;
+        const { error: erroUpdate } = await supabase
+          .from("empresas")
+          .update({
+            razao_social: cliente.nome,
+            nome_fantasia: cliente.nome,
+            // Regime só é atualizado pelo PIER enquanto ninguém confirmou manualmente.
+            ...(existente.regime_confirmado ? {} : { regime: mapearRegime(cliente.tributacao) }),
+          })
+          .eq("id", existente.id);
+
+        if (erroUpdate) {
+          resultado.erros.push(`Cliente PIER ${cliente.id} (${cliente.nome}): ${erroUpdate.message}`);
+        } else {
+          resultado.atualizadas++;
+        }
         continue;
       }
 

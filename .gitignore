@@ -30,3 +30,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Supabase CLI (project uses bun.lock, not npm)
+supabase/.temp/
+package-lock.json
